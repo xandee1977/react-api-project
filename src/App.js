@@ -1,27 +1,34 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import WebService from './WebService';
+
+//const API = 'http://18.228.14.48/api/products/?cmd=list';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.WS = new WebService();
+
+    this.state = {
+      products: []
+    };
+  }
+
+  componentDidMount() {
+    // Loads the product list
+    this.WS
+      .listProducts()
+      .then(data => {
+        this.setState({ products: data});
+      });
+  }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+    let products = this.state.products;
+    return(
+      <ul>
+        { products.map((product) => <li>{product.code} - {product.description}</li>)}
+      </ul>
+    )
   }
 }
 
