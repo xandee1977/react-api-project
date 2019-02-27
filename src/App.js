@@ -4,10 +4,15 @@ import WebService from './WebService';
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.WS = new WebService();
     this.state = {
+      action: 'create',
+      id: null,
       products: [],
     };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -19,61 +24,95 @@ class App extends Component {
       });
   }
 
-  loadProduct( data ) {
-    this.setState({'product': data});
+  editProduct( product ) {
+    this.setState({
+      action: 'update',
+      id: product.id
+    });
+
+    // Need to load the data to edit
   }
 
-  deleteProduct( id ) {
-    console.log(id);
+  handleSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    let data = {}
+
+    for (let name of formData.keys()) {
+      const input = form.elements[name];
+      data[input.name] = input.value;
+    }
+
+    switch(this.state.action) {
+      case 'create':
+        //Create new register
+        this.WS
+          .createProduct(data)
+          .then(data => {
+            console.log('Registro salvo com sucesso');
+          });
+      break;
+      case 'update':
+        //Create new register
+        let id = this.state.id;
+        this.WS
+          .updateProduct(id, data)
+          .then(data => {
+            console.log('Registro atualizado com sucesso');
+          });
+      break;
+    }
+
+    return false;
   }
 
-  saveProduct( data ) {
-    console.log(data.id);
-  }
 
   // Renders the form
   render() {
     return (
       <div className="container">
         <h4>Produto</h4>
-        <div className="row">
-          <div className="col-md-3">
-              <label >Código</label>
-              <input type="text" id="code" />
+        <form  onSubmit={this.handleSubmit}>
+          <div className="row">
+            <div className="col-md-3">
+                <label >Código</label>
+                <input type="text" id="code" name="code" />
+            </div>
+            <div className="col-md-3">
+                <label>Valor</label>
+                <input type="text" name="value" />
+            </div>
+            <div className="col-md-3">
+                <label>Status</label>
+                <input type="text" name="status" />
+            </div>
+            <div className="col-md-3">
+                <label>Quantidade</label>
+                <input type="text" name="qty" />
+            </div>
           </div>
-          <div className="col-md-3">
-              <label>Valor</label>
-              <input type="text" id="value" />
-          </div>
-          <div className="col-md-3">
-              <label>Status</label>
-              <input type="text" id="status" />
-          </div>
-          <div className="col-md-3">
-              <label>Quantidade</label>
-              <input type="text" id="qty" />
-          </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-12">
-              <label>Descrição</label>
-              <textarea id="description" />
+          <div className="row">
+            <div className="col-md-12">
+                <label>Descrição</label>
+                <textarea name="description" />
+            </div>
           </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-12">
-              <label>Descrição Curta</label>
-              <textarea id="short_description" />
+          <div className="row">
+            <div className="col-md-12">
+                <label>Descrição Curta</label>
+                <textarea name="short_description" />
+            </div>
           </div>
-        </div>
 
-        <div className="row">
-          <div className="col-md-12">
-            <button className="btn btn-success float-right">Salvar</button>
+          <div className="row">
+            <div className="col-md-12">
+              <button className="btn btn-success float-right">Salvar</button>
+            </div>
           </div>
-        </div>
+        </form>
 
         { this.productTable() }
 
@@ -105,7 +144,7 @@ class App extends Component {
                 <td>{product.short_description}</td>
                 <td>{product.value}</td>
                 <td>
-                  <button className="btn btn-primary btn-sm" onClick={ () => this.loadProduct( product ) }>Editar</button>
+                  <button className="btn btn-primary btn-sm" onClick={ () => this.editProduct( product ) }>Editar</button>
                   <button className="btn btn-danger btn-sm">Excluir</button>
                 </td>
               </tr>
