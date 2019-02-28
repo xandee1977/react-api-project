@@ -6,10 +6,22 @@
   padding-top: 10px;
 }
 
-.container input, .container textarea{
+.container input, .container textarea,  .container select{
   width: 100%;
 }
 
 .btn {
   margin-left: 10px;
+}
+
+.btn-reset, .btn-search{
+  color: #FFFFFF!important;
+}
+
+div.hideMessage {
+  display: none;
+}
+
+div.showMessage {
+  display: block;
 }

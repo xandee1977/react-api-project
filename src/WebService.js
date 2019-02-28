@@ -29,9 +29,9 @@ class WebService extends Component {
   }
 
   // Update a product
-  updateProduct(id, data) {
+  updateProduct(data) {
     return this.request(
-      'products/' + id,
+      'products/' + data.id,
       'put',
       data
     );
